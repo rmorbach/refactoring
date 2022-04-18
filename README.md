@@ -1,22 +1,33 @@
 - [Técnicas de refatoração](#técnicas-de-refatoração)
-  - [Princípios de refatoração](#princípios-de-refatoração)
-  - [Por que refatorar?](#por-que-refatorar)
-  - [Quando refatorar](#quando-refatorar)
-  - [Quando não refatorar](#quando-não-refatorar)
-  - [Métodos para auxiliar na refatoração](#métodos-para-auxiliar-na-refatoração)
-    - [Refatorações básicas](#refatorações-básicas)
-      - [Extrair função](#extrair-função)
-      - [Internalizar função](#internalizar-função)
-      - [Extrair variável](#extrair-variável)
-      - [Renomear variáveis](#renomear-variáveis)
-      - [Extrair método](#extrair-método)
-      - [Remoção de duplicidade](#remoção-de-duplicidade)
+- [Princípios de refatoração](#princípios-de-refatoração)
+- [Por que refatorar?](#por-que-refatorar)
+- [Quando refatorar](#quando-refatorar)
+- [Quando não refatorar](#quando-não-refatorar)
+- [Métodos para auxiliar na refatoração](#métodos-para-auxiliar-na-refatoração)
+  - [Refatorações básicas](#refatorações-básicas)
+    - [Extrair função](#extrair-função)
+    - [Internalizar função](#internalizar-função)
+    - [Extrair variável](#extrair-variável)
+    - [Introduzir objeto de parâmetros](#introduzir-objeto-de-parâmetros)
+  - [Encapsulamento](#encapsulamento)
+    - [Encapsular coleções](#encapsular-coleções)
+    - [Substitur variável temporária por consulta](#substitur-variável-temporária-por-consulta)
+    - [Ocultar delegação](#ocultar-delegação)
+  - [Movendo recursos](#movendo-recursos)
+    - [Dividir laço](#dividir-laço)
+    - [Substituir laço por pipeline](#substituir-laço-por-pipeline)
+    - [Remover código morto](#remover-código-morto)
+  - [Organizando dados](#organizando-dados)
+    - [Mudar referência para valor](#mudar-referência-para-valor)
+  - [Simplificando lógicas condicionais](#simplificando-lógicas-condicionais)
+    - [Substituir cláusulas aninhadas por instruções de guarda](#substituir-cláusulas-aninhadas-por-instruções-de-guarda)
+    - [Substituir condicional por polimorfismo](#substituir-condicional-por-polimorfismo)
 
 # Técnicas de refatoração
 
 Este é um repositório de estudo para documentar algumas das técnicas de refatoração de projetos de software descritos por Martin Fowler e Kent Beck no livro [Refatoração: Aperfeiçoando o Design de Códigos Existentes](https://www.amazon.com.br/Refatora%C3%A7%C3%A3o-Aperfei%C3%A7oando-Design-C%C3%B3digos-Existentes/dp/8575227246).
 
-## Princípios de refatoração
+# Princípios de refatoração
 
 É importante destacar que a refatoração não é bala de prata. Ela pode sim, juntamente com um bom design arquitetural e todos os princípios que governam o [SOLID](https://blog.cleancoder.com/uncle-bob/2020/10/18/Solid-Relevance.html) conduzir a um código limpo que seja fácil de manter e evoluir.
 
@@ -30,7 +41,7 @@ Por isso, a refatoração deve ser composta de pequenos passos individuais, onde
 
 Uma sugestão dos autores é tratar a refatoração de modo independente das demais atividades de desenvolvimento: novas funcionalidades, resolução de bugs, melhorias de performance, etc. O desenvolvedor pode até acabar resolvendo potenciais bugs ainda não identificados durante o processo de refatoração, mas esse não é o objetivo.
 
-## Por que refatorar?
+# Por que refatorar?
 
 Olhando da perspectiva de um desenvolvedor essa pergunta parece ter uma resposta óbvia. No mundo real não cabe somente ao desenvolvedor decidir se o código deve ser refatorado e quando a refatoração deve acontecer. Ele precisa argumentar e defender a refatoração sob uma perspectiva de melhoria do produto e do projeto para poder convencer todas as partes interessadas.
 
@@ -42,7 +53,7 @@ Os autores destacam alguns pontos onde a refatoração gera resultados mensuráv
 
 * **Refatoração para aumento de produtividade**: os dois pontos anteriores devem resultar neste terceiro, que é o que de fato interessa para todos os envolvidos. Quando o software é fácil de entender e está bem estruturado, sua manutenabilidade é baixa e sua evolução simples.
 
-## Quando refatorar
+# Quando refatorar
 
 A refatoração não é bala de prata e por isso é preciso ponderar sobre o melhor momento e método a ser utilizado para empregá-la.
 
@@ -56,13 +67,13 @@ Os autores apresentam diversas oportunidades e abordagens para aplicar a refator
 
 * **Refatorações planejadas e oportunistas**: as refatorações mencionadas anteriormente são todas oportunistas, isto é, podem ser realizadas durante o desenvolvimento de uma nova funcionalidade ou resolução de um bug. Refatorações planejadas, por outro lado, exigem um tempo dedicado para atuação e normalmente são feitas de modo exclusivo. Esses tipos de refatorações devem ser muito bem analisadas e alinhadas com todos os envolvidos do projeto, a fim de definir expectativas do que será entregue após a sua realização (quais serão os ganhos reais para o projeto/produto).
 
-## Quando não refatorar
+# Quando não refatorar
 
 Nem todo código "feio" precisa ser refatorado. Se o código existe há algum tempo e não precisa ser modificado, pois não prevê evolução, não é necessário refatorar. "A refatoração me trará alguma vantagem somente se eu precisa entender como o código funciona".
 
 Outro caso onde não é aconselhado a refatoração é quando é mais fácil reescrever o código. Um exemplo prático é uma mudança de linguagem de programação dentro de um projeto. O mundo mobile tem proporcionado essa oportunidade com os não recentes suportes às linguages Kotlin para Android e Swift para os dispositivos da Apple. Muito além de simplesmente reescrever a mesma estrutura só que em uma linguagem diferente, essa é uma oportunidade de analisar o que pode ser melhorado e também explorar o potencial da nova linguagem empregada.
 
-## Métodos para auxiliar na refatoração
+# Métodos para auxiliar na refatoração
 
 Abaixo sumarizei, com exemplos do livro, os principais métodos de refatoração elencados pelos autores. Fica com *disclaimer* que mesmo os códigos refatorados podem possuir problemas. O objetivo não é ter um código perfeito ao final de cada refatoração mas sim,colocar em termos práticos os métodos de refatoração.
 
@@ -71,9 +82,9 @@ São mais de 60 métodos de refatoração com exemplos no livro, com antes e dep
 Outro ponto é que o autor divide as refatorações em tópicos, por exemplo: Primeiras refatorações; Encapsulamento; Refatorando API; Lidando com herança; Movendo recursos; Organizando dados e Simplificando lógicas condicionais.
 Vale destacar também que muitos métodos de refatoração possuem etapas que utilizam outros métodos.
 
-### Refatorações básicas
+## Refatorações básicas
 
-#### Extrair função
+### Extrair função
 
 Objetivo: extrair trecho de código em uma função ou método que seja coeso e autocontido.
 
@@ -125,7 +136,7 @@ public func printOwing(invoice: Invoice) {
 
 ```
 
-#### Internalizar função
+### Internalizar função
 
 Objetivo: remover acessos indiretos desnecessários.
 
@@ -151,7 +162,7 @@ func getRating(for driver: Driver) -> Int {
 }
 ```
 
-#### Extrair variável
+### Extrair variável
 
 Objetivo: diminuir complexidade e melhorar legibilidade de expressões.
 
@@ -175,9 +186,9 @@ func calculateFinalPrice(for order: Order) -> Double {
     let result = basePrice - quantityDiscount + shipping
     return result
 }
-```
 
-#### Renomear variáveis
+
+### Renomear variáveis
 
 Objetivo: facilitar a identificação de elementos envolvidos no código.
 
@@ -186,9 +197,72 @@ A maioria dos analisadores estáticos de código previnem o desenvolvedor de nom
 
 Antes:
 
+```swift
+let usrNmStr = getUsername()
+```
+
+Depois:
+
+```swift
+let username: String = getUsername()
+```
 
 
-#### Extrair método
+### Introduzir objeto de parâmetros
 
-#### Remoção de duplicidade
+Objetivo: evitar repetição de parâmetros em diferentes métodos e diminuir o número de argumentos.
+
+É comum que métodos ganhem novos argumentos à medida que novas features vão sendo desenvolvidas. Boas práticas sugerem um número pequeno de argumentos, no máximo 5.
+
+Para resolver o problema de métodos com argumentos repetidos ou com muitos argumentos é útil criar estruturas de dados efêmeras, que fazem sentido somente para encapsular propriedades relacionadas, um objeto de parâmetros.
+
+Antes:
+
+```swift
+func getOrdersSent(startDate: Date, endDate: Date) -> [Order]
+func getOrdersCancelled(startDate: Date, endDate: Date) -> [Order]
+func getOrdersPending(startDate: Date, endDate: Date) -> [Order]
+```
+
+Depois:
+
+```swift
+enum OrderStatus { case pending, sent, cancelled }
+
+struct OrderRequest { 
+    let status: OrderStatus
+    let startDate: Date
+    let endDate: Date
+}
+
+func getOrders(request: OrderRequest) -> [Order]
+
+```
+
+## Encapsulamento
+
+### Encapsular coleções
+
+### Substitur variável temporária por consulta
+
+### Ocultar delegação
+
+## Movendo recursos
+
+### Dividir laço
+
+### Substituir laço por pipeline
+
+### Remover código morto
+
+## Organizando dados
+
+### Mudar referência para valor
+
+## Simplificando lógicas condicionais
+
+### Substituir cláusulas aninhadas por instruções de guarda
+
+### Substituir condicional por polimorfismo
+
 
