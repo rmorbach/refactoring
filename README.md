@@ -1,3 +1,17 @@
+- [Técnicas de refatoração](#técnicas-de-refatoração)
+  - [Princípios de refatoração](#princípios-de-refatoração)
+  - [Por que refatorar?](#por-que-refatorar)
+  - [Quando refatorar](#quando-refatorar)
+  - [Quando não refatorar](#quando-não-refatorar)
+  - [Métodos para auxiliar na refatoração](#métodos-para-auxiliar-na-refatoração)
+    - [Refatorações básicas](#refatorações-básicas)
+      - [Extrair função](#extrair-função)
+      - [Internalizar função](#internalizar-função)
+      - [Extrair variável](#extrair-variável)
+      - [Renomear variáveis](#renomear-variáveis)
+      - [Extrair método](#extrair-método)
+      - [Remoção de duplicidade](#remoção-de-duplicidade)
+
 # Técnicas de refatoração
 
 Este é um repositório de estudo para documentar algumas das técnicas de refatoração de projetos de software descritos por Martin Fowler e Kent Beck no livro [Refatoração: Aperfeiçoando o Design de Códigos Existentes](https://www.amazon.com.br/Refatora%C3%A7%C3%A3o-Aperfei%C3%A7oando-Design-C%C3%B3digos-Existentes/dp/8575227246).
@@ -52,9 +66,14 @@ Outro caso onde não é aconselhado a refatoração é quando é mais fácil ree
 
 Abaixo sumarizei, com exemplos do livro, os principais métodos de refatoração elencados pelos autores. Fica com *disclaimer* que mesmo os códigos refatorados podem possuir problemas. O objetivo não é ter um código perfeito ao final de cada refatoração mas sim,colocar em termos práticos os métodos de refatoração.
 
-### Extrair função
+São mais de 60 métodos de refatoração com exemplos no livro, com antes e depois, e também com passos demonstrando como fazer cada refatoração. Não faria sentido replicar o que está no livro, para isso recomendo a leitura. Selecionei alguns que julgo serem relevantes e corriqueiros no dia-a-dia do desenvolvedor.
 
-Inversa de **Internalizar função**.
+Outro ponto é que o autor divide as refatorações em tópicos, por exemplo: Primeiras refatorações; Encapsulamento; Refatorando API; Lidando com herança; Movendo recursos; Organizando dados e Simplificando lógicas condicionais.
+Vale destacar também que muitos métodos de refatoração possuem etapas que utilizam outros métodos.
+
+### Refatorações básicas
+
+#### Extrair função
 
 Objetivo: extrair trecho de código em uma função ou método que seja coeso e autocontido.
 
@@ -77,7 +96,7 @@ public func printOwing(invoice: Invoice) {
 }
 ```
 
-Após refatoração:
+Após a refatoração:
 
 ```swift 
 public func printOwing(invoice: Invoice) {
@@ -106,9 +125,7 @@ public func printOwing(invoice: Invoice) {
 
 ```
 
-## Internalizar função
-
-Inversa de **Extrair função**.
+#### Internalizar função
 
 Objetivo: remover acessos indiretos desnecessários.
 
@@ -134,13 +151,13 @@ func getRating(for driver: Driver) -> Int {
 }
 ```
 
-## Extrair variável
+#### Extrair variável
 
-Inversa de **Internalizar variável**.
+Objetivo: diminuir complexidade e melhorar legibilidade de expressões.
 
-Objetivo: 
+Sistemas podem demandar cálculos que compreendam vários passos e que possuem fórmulas padrões. Definir operandos como variáveis ajuda a entender os cálculos realizados e auxilia no processo de depuração e debug.
 
-Antes: exemplo de cálculo usando uma entidade denominada order.
+Antes: exemplo de cálculo usando uma entidade order.
 
 ```swift
 func calculateFinalPrice(for order: Order) -> Double {
@@ -160,9 +177,18 @@ func calculateFinalPrice(for order: Order) -> Double {
 }
 ```
 
-### Renomear variáveis
+#### Renomear variáveis
 
-### Extrair método
+Objetivo: facilitar a identificação de elementos envolvidos no código.
 
-### Remoção de duplicidade
+Definir bons nomes para variáveis é um desafio diário para o desenvolvedor. Este é também um dos principais pilares do Clean Code.
+A maioria dos analisadores estáticos de código previnem o desenvolvedor de nomear variáveis com *X* e *bla*, mas isso não quer dizer que os nomes utilizados sejam bons para o contexto em que estão sendo utilizados.
+
+Antes:
+
+
+
+#### Extrair método
+
+#### Remoção de duplicidade
 
