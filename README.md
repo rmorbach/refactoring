@@ -8,6 +8,7 @@
     - [Extrair função](#extrair-função)
     - [Internalizar função](#internalizar-função)
     - [Extrair variável](#extrair-variável)
+    - [Renomear variáveis](#renomear-variáveis)
     - [Introduzir objeto de parâmetros](#introduzir-objeto-de-parâmetros)
   - [Encapsulamento](#encapsulamento)
     - [Encapsular coleções](#encapsular-coleções)
@@ -186,7 +187,7 @@ func calculateFinalPrice(for order: Order) -> Double {
     let result = basePrice - quantityDiscount + shipping
     return result
 }
-
+```
 
 ### Renomear variáveis
 
@@ -214,7 +215,7 @@ Objetivo: evitar repetição de parâmetros em diferentes métodos e diminuir o 
 
 É comum que métodos ganhem novos argumentos à medida que novas features vão sendo desenvolvidas. Boas práticas sugerem um número pequeno de argumentos, no máximo 5.
 
-Para resolver o problema de métodos com argumentos repetidos ou com muitos argumentos é útil criar estruturas de dados efêmeras, que fazem sentido somente para encapsular propriedades relacionadas, um objeto de parâmetros.
+Para resolver o problema de métodos com argumentos repetidos ou com muitos argumentos é útil criar estruturas de dados efêmeras, que fazem sentido somente para encapsular propriedades relacionadas, um **objeto de parâmetros**.
 
 Antes:
 
