@@ -12,7 +12,8 @@
     - [Introduzir objeto de parâmetros](#introduzir-objeto-de-parâmetros)
   - [Encapsulamento](#encapsulamento)
     - [Encapsular coleções](#encapsular-coleções)
-    - [Substitur variável temporária por consulta](#substitur-variável-temporária-por-consulta)
+    - [Substitur primitivo por objeto](#substitur-primitivo-por-objeto)
+    - [Extrair classe](#extrair-classe)
     - [Ocultar delegação](#ocultar-delegação)
   - [Movendo recursos](#movendo-recursos)
     - [Dividir laço](#dividir-laço)
@@ -242,9 +243,61 @@ func getOrders(request: OrderRequest) -> [Order]
 
 ## Encapsulamento
 
+Essa seção trata de estratégias para definir o que módulos devem ou não expor para os seus consumidores.
+Estruturas de dados em geral não devem ser expostas para outras partes do sistema e podem ser encapsuladas através de algumas das estratégias apresentadas abaixo.
+
+Encapsular funções em classes específicas também facilita a compreensão do código e permite o reuso para situações comuns.
+
 ### Encapsular coleções
 
-### Substitur variável temporária por consulta
+Objetivo: encapsular dados mutáveis em classes para facilitar o gerenciamento de quem os está alterando. Esse método também permite que a estratégia escolhida para armazenar os dados fique transparente para quem está usando a classe que encapsula, podem ser alterada se necessário.
+
+Exemplo: a classe `ShoppingCart` abaixo expõe uma variável `products` que pode ser alterada externamente. 
+
+```swift
+struct Product: Equatable {
+    let name: String
+    let price: Double
+}
+
+class ShoppingCart {
+    var products: [Product] = .init()
+}
+```
+
+Qualquer classe que possua uma instância de `ShoppingCart` pode adicionar e remover produtos sem o menor controle e conhecimento da estrutura responsável por armazenar a informação. Observe também que a estrutura de dados utilizada para armazenar os produtos é de conhecimento de instâncias fora da classe, o que pode gerar um problema se, no futuro, novas features exijam a alteração desse tipo.
+
+Outro ponto de problema dessa abordagem é que, por se tratar de uma classe, `ShoppingCart` não é **thread safe**, pois ela não tem conhecimento das threads que podem alterar a sua propriedade `products`.
+
+Uma forma de encapsular esses dados é mostrada abaixo:
+
+```swift
+struct ShoppingCart {
+    private var _products: [Product] = .init()
+    
+    var products: [Product] {
+        return _products
+    }
+    
+    mutating func add(product: Product) {
+        self._products.append(product)
+    }
+    
+    mutating func remove(product: Product) {
+        self._products.removeAll(where: { $0 == product })
+    }
+    
+    mutating func clear() {
+        self._products.removeAll()
+    }
+}
+```
+
+A agora `struct` `ShoppingCart` encapsula os métodos de manipulação dos produtos, aumentando assim o seu nível de controle sobre sua propriedade. A estrutura de dados da propriedade `_products` não precisa mais ser previamente conhecida por quem utiliza essa classe. Sabe-se que ela expõe os dados para leitura através de um `Array`, mas isso não impede que a propriedade privada `_products` possa ser alterada para outro tipo sem impactar os utilizadores da classe `ShoppingCart`.
+
+### Substitur primitivo por objeto
+
+### Extrair classe
 
 ### Ocultar delegação
 
