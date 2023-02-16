@@ -243,14 +243,14 @@ func getOrders(request: OrderRequest) -> [Order]
 
 ## Encapsulamento
 
-Essa seção trata de estratégias para definir o que módulos devem ou não expor para os seus consumidores.
+Esta seção trata de estratégias para definir o que módulos devem ou não expor para os seus consumidores, através de refatorações.
 Estruturas de dados em geral não devem ser expostas para outras partes do sistema e podem ser encapsuladas através de algumas das estratégias apresentadas abaixo.
 
 Encapsular funções em classes específicas também facilita a compreensão do código e permite o reuso para situações comuns.
 
 ### Encapsular coleções
 
-Objetivo: encapsular dados mutáveis em classes para facilitar o gerenciamento de quem os está alterando. Esse método também permite que a estratégia escolhida para armazenar os dados fique transparente para quem está usando a classe que encapsula, podem ser alterada se necessário.
+Objetivo: encapsular dados mutáveis em classes para facilitar o gerenciamento de quem os está alterando. Esse método também permite que a estratégia escolhida para armazenar os dados fique transparente para quem está usando a classe que encapsula, podendo ser alterada se necessário.
 
 Exemplo: a classe `ShoppingCart` abaixo expõe uma variável `products` que pode ser alterada externamente. 
 
@@ -293,9 +293,46 @@ struct ShoppingCart {
 }
 ```
 
-A agora `struct` `ShoppingCart` encapsula os métodos de manipulação dos produtos, aumentando assim o seu nível de controle sobre sua propriedade. A estrutura de dados da propriedade `_products` não precisa mais ser previamente conhecida por quem utiliza essa classe. Sabe-se que ela expõe os dados para leitura através de um `Array`, mas isso não impede que a propriedade privada `_products` possa ser alterada para outro tipo sem impactar os utilizadores da classe `ShoppingCart`.
+A agora `struct` `ShoppingCart` encapsula os métodos de manipulação dos produtos, aumentando assim o seu nível de controle sobre sua propriedade. A estrutura de dados da propriedade `_products` não precisa mais ser previamente conhecida por quem utiliza essa classe. Sabe-se que a classe expõe os dados para leitura através de um `Array`, mas isso não impede que a propriedade privada `_products` possa ser alterada para outro tipo sem impactar os utilizadores da classe `ShoppingCart`.
 
 ### Substitur primitivo por objeto
+
+Esta técnica pode levantar muitos questionamentos à primeira vista, principalmente para novos programadores.
+Mas ela está diretamente ligada ao conceito de [(*Value Object*)](https://martinfowler.com/bliki/ValueObject.html)
+
+Objetivo: substituir tipos primitivos (inteiros, booleanos, strings), por objetos complexos.
+
+Ao iniciar um desenvolvimento, parece fazer muito sentido representar, por exemplo, um número de CPF de um cliente em formato de string.
+
+```swift
+struct User {
+    let cpf: String
+}
+```
+Essa abordagem é perfeitamente aceita. O dado está pronto para ser exibido. Mas ela permite também que regras de validação estejam espalhadas por diferentes trechos de código, causando duplicação e aumentando a complexidade.
+
+Criar um tipo específico para tratar **cpf** traz algumas vantagens.
+
+```swift
+struct CPF: Equatable {
+    private let value: String
+        
+    var formattedValue: String {
+        // return cpf with dots and dashes
+    }
+    
+    var isValid: Bool {
+        // perform cpf validations
+    }
+    
+    var verifyingDigits: Int {
+        // return the last two numbers
+    }
+}
+```
+
+A *struct* **CPF** encapsula a estrutura de dados de armazenamento do valor e fornece uma série de propriedades, que poderiam ser métodos em outras linguagens de programação, que podem ser reutilizadas em diferentes partes do código. 
+Se futuramente, por exemplo, a forma de validação mudar, existirá apenas um ponto de alteração no código, diminuindo a chance de efeitos colaterais.
 
 ### Extrair classe
 
