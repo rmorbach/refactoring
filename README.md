@@ -13,7 +13,6 @@
   - [Encapsulamento](#encapsulamento)
     - [Encapsular coleções](#encapsular-coleções)
     - [Substitur primitivo por objeto](#substitur-primitivo-por-objeto)
-    - [Extrair classe](#extrair-classe)
     - [Ocultar delegação](#ocultar-delegação)
   - [Movendo recursos](#movendo-recursos)
     - [Dividir laço](#dividir-laço)
@@ -334,9 +333,70 @@ struct CPF: Equatable {
 A *struct* **CPF** encapsula a estrutura de dados de armazenamento do valor e fornece uma série de propriedades, que poderiam ser métodos em outras linguagens de programação, que podem ser reutilizadas em diferentes partes do código. 
 Se futuramente, por exemplo, a forma de validação mudar, existirá apenas um ponto de alteração no código, diminuindo a chance de efeitos colaterais.
 
-### Extrair classe
-
 ### Ocultar delegação
+
+O principal objetivo do encapsulamento é esconder de módulos externos informações desnecessárias. Isso se torna mais complexo quando um módulo precisa expor informações que são de responsabilidade de um módulo ou classe internos.
+
+Uma forma de fazer isso seria expor a classe para quem utiliza o intermediário. Suponha que tenhamos uma `ViewController` responsável por agregar alguns `ViewControllers` filhos. Esses filhos podem estar em um módulo separado. Suponhamos agora que a `ViewController` pai precise acessar alguma propriedade de um dos controllers filhos, por exemplo:
+
+
+```swift
+
+class PersonView: UIView {
+    var nameTextField: UITextField?
+}
+
+class PersonViewController: UIViewController {
+    var personView: PersonView?
+}
+
+class HolderViewController: UIViewController {
+    
+    var personViewController: PersonViewController = .init()
+    
+    func getPersonName() -> String? {
+        return personViewController.personView?.nameTextField?.text
+    }
+    
+}
+```
+
+O código acima pode ser representado pelo diagrama abaixo:
+
+![Hide Delegation before](images/hide-delegation-before.png)
+
+Da forma que foi construído, a classe `HolderViewController` precisa necessariamente saber o tipo e os métodos disponíveis em uma propriedade de `PersonViewController`. Com essa construção, qualquer alteração que for realizada na classe `PersonView` refletirá para fora do módulo, necessitando alterações em várias camadas.
+
+Uma das formas de resolver esse problema é ocultar a propriedade interna de `PersonViewController` e simplesmente oferecer acesso às suas propriedades através de métodos ou propriedades públicas. Por exemplo:
+
+```swift
+class PersonView: UIView {
+    var nameTextField: UITextField?
+}
+
+class PersonViewController: UIViewController {
+    private var personView: PersonView?
+    
+    var personName: String? {
+        return personView?.nameTextField?.text
+    }
+}
+
+class HolderViewController: UIViewController {
+    
+    var personViewController: PersonViewController = .init()
+    
+    func getPersonName() -> String? {
+        return personViewController.personName
+    }
+}
+```
+
+`HolderViewController` não precisa mais conhecer o tipo `PersonView`, podendo agora acessar sua propriedade através da variável `personName` na classe `PersonViewController`. Qualquer alteração que precise ser realizada na classe `PersonView` demandará adaptações somente até a classe `PersonViewController`, não afetando mais a classe do "módulo" externo.
+
+A refatoração pode ser representada pela figura abaixo:
+
+![Hide Delegation after](images/hide-delegation-after.png)
 
 ## Movendo recursos
 
