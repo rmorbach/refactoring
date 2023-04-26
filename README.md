@@ -493,6 +493,8 @@ extension UIViewController {
 }
 ```
 
+Quem desenvolve para iOS sabe que é muito comum utilizar o `NotificationCenter` para "ouvir" eventos de diversos tipos, seja do próprio sistema, ou customizados, com o objetivo de desacoplar entre e o publicador e o observador. A abordagem realizada acima expõe métodos de registro e remoção de observers para todas as instâncias de `UIViewController` do projeto.
+
 ### Dividir laço
 
 ### Substituir laço por pipeline
