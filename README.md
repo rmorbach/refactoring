@@ -15,6 +15,7 @@
     - [Substitur primitivo por objeto](#substitur-primitivo-por-objeto)
     - [Ocultar delegação](#ocultar-delegação)
   - [Movendo recursos](#movendo-recursos)
+    - [Extender funcionalidade para tipos existentes](#extender-funcionalidade-para-tipos-existentes)
     - [Dividir laço](#dividir-laço)
     - [Substituir laço por pipeline](#substituir-laço-por-pipeline)
     - [Remover código morto](#remover-código-morto)
@@ -243,7 +244,7 @@ func getOrders(request: OrderRequest) -> [Order]
 ## Encapsulamento
 
 Esta seção trata de estratégias para definir o que módulos devem ou não expor para os seus consumidores, através de refatorações.
-Estruturas de dados em geral não devem ser expostas para outras partes do sistema e podem ser encapsuladas através de algumas das estratégias apresentadas abaixo.
+Estruturas de dados em geral não devem ser expostas para outras partes do sistema e podem ser encapsuladas através de algumas das estratégias apresentadas a seguir.
 
 Encapsular funções em classes específicas também facilita a compreensão do código e permite o reuso para situações comuns.
 
@@ -399,6 +400,98 @@ A refatoração pode ser representada pela figura abaixo:
 ![Hide Delegation after](images/hide-delegation-after.png)
 
 ## Movendo recursos
+
+Além de realizar alterações em código uma parte importante da refatoração consiste em mover recursos (métodos, classes, funções) para contextos que sejam mais coerentes à medida que o projeto evolui. A movimentação dos recursos pode se dar exclusivamente dentro de um mesmo contexto (por exemplo, uma classe ou função), com o simples objetivo de reordenar e agrupar recursos relacionados de modo que facilitem a compreensão do código que foi construído.
+
+Mover recursos ajuda a reaproveitar códigos e diminuir replicação, além de padronizar comportamentos.
+
+### Extender funcionalidade para tipos existentes
+
+A maioria das linguagens modernas oferece métodos para extender a capacidade de tipos existentes através da criação de métodos, funções ou variáveis que se tornam disponíveis em tempo de desenvolvimento para todos as instâncias criadas.
+
+No Javascript essa alteração de comportamente vem de muito tempo através do [`Prototype`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes).
+
+Exemplo:
+
+```javascript
+function Person(firstname, lastname, age) { 
+    this.firstname = firstname
+    this.lastname = lastname
+    this.age = age
+}
+
+const me = Person("Rodrigo", "Morbach", 30)
+
+// Extend Person funcionality
+Person.prototype.printData = function() {
+    console.log("Firstname: " + this.firstname + "\n" + 
+                "Lastname: " + this.lastname + "\n" + 
+                "Age: " + this.age)
+}
+
+me.printData()
+
+/* Console should output 
+Firstname: Rodrigo
+Lastname: Morbach
+Age: 30
+*/
+```
+
+Essa mesma capacidade está disponível em linguagens multiparadigma, como [Extensions em Kotlin](https://kotlinlang.org/docs/extensions.html), [Extensions in Swift](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/extensions/), [Dart extesion methods](https://dart.dev/language/extension-methods), and so on.
+
+Um exemplo muito comum é mover uma função que existe apenas em um contexto específico para uma extension de modo que possa ser reaproveitada.
+
+Exemplo antes:
+
+```swift
+class CustomViewController: UIViewController {
+    
+    func addObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(someMethod), name: NSNotification.Name("event"), object: nil)
+    }
+    
+    func removerObservers() {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "event"), object: nil)
+    }
+    
+    @objc func someMethod() {
+        // TODO
+    }
+}
+```
+
+Com extension:
+
+```swift
+
+class CustomViewController: UIViewController {
+    
+    func addObservers() {
+        registerObserver(selector: #selector(someMethod), eventName: "event")
+    }
+    
+    func removerObservers() {
+        removeObserver(eventName: "event")
+    }
+    
+    @objc func someMethod() {
+        // TODO
+    }
+}
+
+///Enable methodos to all UIViewControllers
+
+extension UIViewController {
+    func registerObserver(selector: Selector, eventName: String) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: NSNotification.Name(eventName), object: nil)
+    }
+    
+    func removeObserver(eventName: String) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: eventName), object: nil)
+    }
+}
+```
 
 ### Dividir laço
 
