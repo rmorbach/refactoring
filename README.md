@@ -15,8 +15,7 @@
     - [Substitur primitivo por objeto](#substitur-primitivo-por-objeto)
     - [Ocultar delegação](#ocultar-delegação)
   - [Movendo recursos](#movendo-recursos)
-    - [Extender funcionalidade para tipos existentes](#extender-funcionalidade-para-tipos-existentes)
-    - [Dividir laço](#dividir-laço)
+    - [Estender funcionalidade para tipos existentes](#estender-funcionalidade-para-tipos-existentes)
     - [Substituir laço por pipeline](#substituir-laço-por-pipeline)
     - [Remover código morto](#remover-código-morto)
   - [Organizando dados](#organizando-dados)
@@ -401,13 +400,13 @@ A refatoração pode ser representada pela figura abaixo:
 
 ## Movendo recursos
 
-Além de realizar alterações em código uma parte importante da refatoração consiste em mover recursos (métodos, classes, funções) para contextos que sejam mais coerentes à medida que o projeto evolui. A movimentação dos recursos pode se dar exclusivamente dentro de um mesmo contexto (por exemplo, uma classe ou função), com o simples objetivo de reordenar e agrupar recursos relacionados de modo que facilitem a compreensão do código que foi construído.
+Além de realizar alterações em código, uma parte importante da refatoração consiste em mover recursos (métodos, classes, funções) para contextos que sejam mais coerentes à medida que o projeto evolui. A movimentação dos recursos pode se dar exclusivamente dentro de um mesmo contexto (por exemplo, uma classe ou função), com o simples objetivo de reordenar ou agrupar recursos relacionados de modo que facilitem a compreensão do código que foi construído.
 
 Mover recursos ajuda a reaproveitar códigos e diminuir replicação, além de padronizar comportamentos.
 
-### Extender funcionalidade para tipos existentes
+### Estender funcionalidade para tipos existentes
 
-A maioria das linguagens modernas oferece métodos para extender a capacidade de tipos existentes através da criação de métodos, funções ou variáveis que se tornam disponíveis em tempo de desenvolvimento para todos as instâncias criadas.
+A maioria das linguagens modernas oferece métodos para estender a capacidade de tipos existentes através da criação de métodos, funções ou variáveis que se tornam disponíveis em tempo de desenvolvimento para todos as instâncias criadas.
 
 No Javascript essa alteração de comportamente vem de muito tempo através do [`Prototype`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes).
 
@@ -438,7 +437,7 @@ Age: 30
 */
 ```
 
-Essa mesma capacidade está disponível em linguagens multiparadigma, como [Extensions em Kotlin](https://kotlinlang.org/docs/extensions.html), [Extensions in Swift](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/extensions/), [Dart extesion methods](https://dart.dev/language/extension-methods), and so on.
+Essa mesma capacidade está disponível em linguagens multiparadigma, como [Extensions em Kotlin](https://kotlinlang.org/docs/extensions.html), [Extensions in Swift](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/extensions/), [Dart extesion methods](https://dart.dev/language/extension-methods), entre outras.
 
 Um exemplo muito comum é mover uma função que existe apenas em um contexto específico para uma extension de modo que possa ser reaproveitada.
 
@@ -495,9 +494,65 @@ extension UIViewController {
 
 Quem desenvolve para iOS sabe que é muito comum utilizar o `NotificationCenter` para "ouvir" eventos de diversos tipos, seja do próprio sistema, ou customizados, com o objetivo de desacoplar entre e o publicador e o observador. A abordagem realizada acima expõe métodos de registro e remoção de observers para todas as instâncias de `UIViewController` do projeto.
 
-### Dividir laço
-
 ### Substituir laço por pipeline
+
+Na minha opinião, este método de refatoração está mais relacionado a acompanhar as evoluções das linguagens do que definir uma maneira de melhorar a manutenibilidade do código. Porém, é inegável que os métodos de pipeline para arrays tornam as operações mais simples e inteligíveis, uma vez que entenda-se o conceito de pipelines.
+
+Abaixo um exemplo de loop em Swift que realiza transformações nos dados e salva em uma nova coleção.
+
+```swift
+let data = stride(from: 1, to: 6, by: 1)
+
+var times2: [Int] = []
+
+for value in data {
+    times2.append(value * 2)
+    print(value)
+}
+print(times2)
+```
+O resultado será *[2, 4, 6, 8, 10]*.
+
+O código acima é bastante simples mas impõe a necessidade de criar uma variável mutável para armazenador os valores alterados dentro do laço. O Swift, assim como outras linguagens de programação modernas, dispõe do método *map* para realizar esse tipo de trabalho.
+
+```swift
+var data = stride(from: 1, to: 6, by: 1)
+
+let doubles = data.map { value in
+    return value * 2
+}
+print(doubles)
+```
+
+Adotando o conceito de pipeline, é possível encadear o resultado da operação realizada em uma nova transformação, por exemplo, filtrar os valores maiores que 5.
+
+```swift
+let biggerThan5 = data.map { value in
+    return value * 2
+}.filter { value in
+    value > 5
+}
+
+print(biggerThan5) //[6, 8, 10]
+```
+
+É possível encadear um novo método para retornar o maior valor da sequência.
+```swift
+var data = stride(from: 1, to: 6, by: 1)
+
+let max = data.map { value in
+    return value * 2
+}.filter { value in
+    value > 5
+}.max()
+
+print(max) //10
+```
+
+O conceito de pipeline facilita o trabalho quando múltiplas operações precisam ser feitas dentro de um mesmo laço, ou quando vários laços precisam ser criados para realizar o trabalho desejado.
+
+Outra vantagem dessa abordagem é menor utilização de dados mutáveis, o que aumenta a previsibilidade e possíveis problemas de concorrência no código.
+
 
 ### Remover código morto
 
