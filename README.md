@@ -569,6 +569,40 @@ Sempre remova código não utilizado.
 
 ### Mudar referência para valor
 
+Essa refatoração é motivado novamente pelo conceito de imutabilidade. Imutabilidade denota previsibilidade e facilita o trabalho no momento de realizar análises de problemas e comportamentos inesperados dentro do seu programa.
+
+Ao mudar os objetos de referência por valor, tem-se o conceito de objeto de valor [(*Value Object*)](https://martinfowler.com/bliki/ValueObject.html), que permite realizar alterações em propriedades que sejam desse tipo, substituindo-a totalmente, sem causar efeitos colaterais.
+
+Em Swift, o modo mais simples de substituir objetos de referência por objetos de valor é trocar o tipo *class* por algum outro que atenda o mesmo propósito, por exemplo, uma *struct*, *enum* ou *tupla*.
+
+```swift
+class PeopleManager {
+    let people: [Person]
+}
+
+class Person {
+    let name: String
+    let surname: String
+    let age: Int
+}
+
+```
+
+Depois 
+
+```swift
+class PeopleManager {
+    let people: [Person]
+}
+
+struct Person {
+    let name: String
+    let surname: String
+    let age: Int
+}
+```
+
+
 ## Simplificando lógicas condicionais
 
 ### Substituir cláusulas aninhadas por instruções de guarda
