@@ -553,8 +553,17 @@ O conceito de pipeline facilita o trabalho quando múltiplas operações precisa
 
 Outra vantagem dessa abordagem é menor utilização de dados mutáveis, o que aumenta a previsibilidade e possíveis problemas de concorrência no código.
 
-
 ### Remover código morto
+
+Essa refatoração não necessita de exemplo de código. Muitas IDEs indicam ao programador quando algum trecho de código, como métodos ou variáveis, não estão sendo utilizados. Outras IDEs não fazem isso, como é o do Xcode.
+
+Talvez por receio de poder precisar dele futuramente, ou com medo de causar algum comportamento não previsto e suspeitar que foi o código removido (mesmo que não esteja sendo utilizado), muitos programadores preferem deixar o código como está.
+
+Isso introduz ruído para quem está analisando o código e precisa entender o fluxo para uma nova implementação ou realizar uma correção de bug.
+
+Para o caso de talvez precisar do código no futuro lembre-se, deixe o seu versionador de código fazer o trabalho dele e confie que, se um dia você precisar, o histórico estará lá.
+
+Sempre remova código não utilizado.
 
 ## Organizando dados
 
